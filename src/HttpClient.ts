@@ -4,7 +4,12 @@ interface RequestOptions {
   method: "GET" | "POST" | "PUT" | "DELETE";
   headers?: Record<string, string>;
   queryParameters?: Record<string, string>;
-  body?: any;
+  body?: unknown;
+}
+
+interface HttpResponse<T> {
+  data: T;
+  status: number;
 }
 
 export default class HttpClient {
@@ -14,40 +19,32 @@ export default class HttpClient {
     this.baseUrl = baseUrl;
   }
 
-  public async get<T>(path: string, options: RequestOptions = {
-      method: "GET"
-  }): Promise<T> {
-    const url = this.buildUrl(path, options.queryParameters);
-    const requestOptions = this.buildRequestOptions("GET", options);
-    const response = await this.sendRequest(url, requestOptions);
-    return this.parseResponseBody<T>(response);
-  }
+  private async sendRequest<T>(url: string, options: http.RequestOptions): Promise<HttpResponse<T>> {
+    return new Promise<HttpResponse<T>>((resolve, reject) => {
+      const req = http.request(url, options, (res) => {
+        let data = "";
+        res.on("data", (chunk) => {
+          data += chunk;
+        });
+        res.on("end", () => {
+          const response: HttpResponse<T> = {
+            data: JSON.parse(data) as T,
+            status: res.statusCode || 200,
+          };
+          resolve(response);
+        });
+      });
 
-  public async post<T>(path: string, options: RequestOptions = {
-      method: "POST"
-  }): Promise<T> {
-    const url = this.buildUrl(path, options.queryParameters);
-    const requestOptions = this.buildRequestOptions("POST", options);
-    const response = await this.sendRequest(url, requestOptions);
-    return this.parseResponseBody<T>(response);
-  }
+      req.on("error", (err) => {
+        reject(err);
+      });
 
-  public async put<T>(path: string, options: RequestOptions = {
-      method: "PUT"
-  }): Promise<T> {
-    const url = this.buildUrl(path, options.queryParameters);
-    const requestOptions = this.buildRequestOptions("PUT", options);
-    const response = await this.sendRequest(url, requestOptions);
-    return this.parseResponseBody<T>(response);
-  }
+      if (options.body) {
+        req.write(JSON.stringify(options.body));
+      }
 
-  public async delete<T>(path: string, options: RequestOptions = {
-      method: "DELETE"
-  }): Promise<T> {
-    const url = this.buildUrl(path, options.queryParameters);
-    const requestOptions = this.buildRequestOptions("DELETE", options);
-    const response = await this.sendRequest(url, requestOptions);
-    return this.parseResponseBody<T>(response);
+      req.end();
+    });
   }
 
   private buildUrl(path: string, queryParameters?: Record<string, string>): string {
@@ -72,56 +69,34 @@ export default class HttpClient {
     return requestOptions;
   }
 
-  private sendRequest(url: string, options: http.RequestOptions): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      const req = http.request(url, options, (res) => {
-        let data = "";
-        res.on("data", (chunk) => {
-          data += chunk;
-        });
-        res.on("end", () => {
-          resolve(data);
-        });
-      });
-      req.on("error", (err) => {
-        reject(err);
-      });
-      if (options.body) {
-        req.write(JSON.stringify(options.body));
-      }
-      req.end();
-    });
+  private async send<T>(
+    method: RequestOptions["method"],
+    path: string,
+    options: RequestOptions = {}
+  ): Promise<T> {
+    const url = this.buildUrl(path, options.queryParameters);
+    const requestOptions = this.buildRequestOptions(method, options);
+    const response = await this.sendRequest<HttpResponse<T>>(url, requestOptions);
+    return this.parseResponseBody<T>(response.data);
+  }
+
+  public async get<T>(path: string, options: RequestOptions = { method: "GET" }): Promise<T> {
+    return this.send<T>("GET", path, options);
+  }
+
+  public async post<T>(path: string, options: RequestOptions = { method: "POST" }): Promise<T> {
+    return this.send<T>("POST", path, options);
+  }
+
+  public async put<T>(path: string, options: RequestOptions = { method: "PUT" }): Promise<T> {
+    return this.send<T>("PUT", path, options);
+  }
+
+  public async delete<T>(path: string, options: RequestOptions = { method: "DELETE" }): Promise<T> {
+    return this.send<T>("DELETE", path, options);
   }
 
   private parseResponseBody<T>(response: string): T {
     return JSON.parse(response) as T;
   }
-}
-
-// Example usage
-const client = new HttpClient("http://api.example.com");
-
-// GET request
-client.get<User>("/users/123")
-  .then((user) => {
-    console.log(user);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
-
-// POST request
-const newUser = { name: "John Doe", email: "johndoe@example.com" };
-client.post<User>("/users", { body: newUser })
-  .then((createdUser) => {
-    console.log(createdUser);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
 }
