@@ -1,5 +1,10 @@
-import HttpClient from "./HttpClient"
+import HttpClient from "./HttpClient";
 
-class Nimbus{
-    private httpClient: HttpClient;
+let httpClientInstance: HttpClient | null = null;
+
+export default function nimbus(baseUrl: string): HttpClient {
+  if (!httpClientInstance) {
+    httpClientInstance = new HttpClient(baseUrl);
+  }
+  return httpClientInstance;
 }
