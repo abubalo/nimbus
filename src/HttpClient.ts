@@ -19,7 +19,7 @@ export default class HttpClient {
     this.baseUrl = baseUrl;
   }
 
-  private async sendRequest<T>(url: string, options: http.RequestOptions): Promise<HttpResponse<T>> {
+  private async sendRequest<T>(url: string, options: RequestOptions): Promise<HttpResponse<T>> {
     return new Promise<HttpResponse<T>>((resolve, reject) => {
       const req = http.request(url, options, (res) => {
         let data = "";
@@ -61,18 +61,19 @@ export default class HttpClient {
   private buildRequestOptions(method: string, options: RequestOptions): http.RequestOptions {
     const requestOptions: http.RequestOptions = {
       method,
-      headers: options.headers || {},
+      headers: options.headers ?? {}, // Use empty object if options.headers is undefined
     };
     if (options.body) {
-      requestOptions.headers["Content-Type"] = "application/json";
+      requestOptions.headers!["Content-Type"] = "application/json";
     }
     return requestOptions;
   }
 
+
   private async send<T>(
     method: RequestOptions["method"],
     path: string,
-    options: RequestOptions = {}
+    options: RequestOptions 
   ): Promise<T> {
     const url = this.buildUrl(path, options.queryParameters);
     const requestOptions = this.buildRequestOptions(method, options);
