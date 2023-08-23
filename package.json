@@ -7,7 +7,7 @@
     "http": "^0.0.1-security"
   },
   "scripts": {
-    "start": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules src"
+    "start": "ts-node-dev"
   },
   "devDependencies": {
     "@types/node": "^20.3.2"
