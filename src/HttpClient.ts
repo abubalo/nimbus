@@ -1,6 +1,6 @@
 import * as http from "http";
 
-interface RequestOptions {
+interface RequestOptions extends http.RequestOptions{
   method: "GET" | "POST" | "PUT" | "DELETE";
   headers?: Record<string, string>;
   queryParameters?: Record<string, string>;
@@ -77,7 +77,7 @@ export default class HttpClient {
   ): Promise<T> {
     const url = this.buildUrl(path, options.queryParameters);
     const requestOptions = this.buildRequestOptions(method, options);
-    const response = await this.sendRequest<HttpResponse<T>>(url, requestOptions);
+    const response = await this.sendRequest<HttpResponse<T>>(url, requestOptions as RequestOptions);
     return this.parseResponseBody<T>(response.data);
   }
 
@@ -97,7 +97,7 @@ export default class HttpClient {
     return this.send<T>("DELETE", path, options);
   }
 
-  private parseResponseBody<T>(response: string): T {
-    return JSON.parse(response) as T;
+  private parseResponseBody<T>(response: any): T {
+    return JSON.parse(response);
   }
 }
