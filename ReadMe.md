@@ -1,6 +1,6 @@
 # Exploratory HTTP Client
 
-**Disclaimer: This project is intended for learning purposes only and does not serve as a substitute for fully-featured JavaScript HTTP clients. It is not actively maintained.**
+> **Disclaimer: This project is intended for learning purposes only and does not serve as a substitute for fully-featured JavaScript HTTP clients. It is not actively maintained.**
 
 ## Overview
 
@@ -54,10 +54,8 @@ Observe the output in the console to see the results of the sample GET and POST 
 ## Usage 
 
 ```typescript
-import HttpClient from "./src/HttpClient";
+import nimbus from "./src/nimbus";
 
-// Create an instance of the HttpClient with the base URL of the API
-const client = new HttpClient("http://api.example.com");
 
 interface User {
   id: string;
@@ -66,7 +64,7 @@ interface User {
 }
 
 // GET request
-client.get<User>("/users/123")
+client.get<User>("http://api.example.com/users/123")
   .then((user) => {
     console.log(user);
   })
@@ -76,16 +74,37 @@ client.get<User>("/users/123")
 
 // POST request
 const newUser = { name: "John Doe", email: "johndoe@example.com" };
-client.post<User>("/users", { body: newUser })
+client.post<User>("http://api.example.com/users", { body: newUser })
   .then((createdUser) => {
     console.log(createdUser);
   })
   .catch((error) => {
     console.error(error);
   });
+
+// PUT request
+const datatTopUpdate = { email: "johndoe@example.com" };
+client.put<User>("http://api.example.com/users/2333", { body: datatTopUpdate })
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+
+// PUT request
+const datatTopUpdate = { email: "johndoe@example.com" };
+client.delete<User>("http://api.example.com/users",)
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 ```
-## Contributions
-Please note that this project is solely for educational purposes. If you find a way to improve or optimize it, feel free to fork this repository and experiment with the code for personal learning or exploratory purposes.
+
+> Please note that this project is solely for educational purposes. If you find a way to improve or optimize it, feel free to fork this repository and experiment with the code for personal learning or exploratory purposes.
 
 ## License
 This project is provided under the MIT License. Feel free to use and modify the code according to the terms of the license.
