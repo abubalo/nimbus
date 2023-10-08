@@ -1,6 +1,6 @@
 import * as http from "http";
 
-interface RequestOptions extends http.RequestOptions{
+export interface RequestOptions extends http.RequestOptions {
   method: "GET" | "POST" | "PUT" | "DELETE";
   headers?: Record<string, string>;
   queryParameters?: Record<string, string>;
@@ -13,9 +13,9 @@ interface HttpResponse<T> {
 }
 
 export default class HttpClient {
-  private baseUrl: string;
+  private baseUrl: string | undefined;
 
-  constructor(baseUrl: string) {
+  constructor(baseUrl?: string) {
     this.baseUrl = baseUrl;
   }
 
@@ -48,7 +48,11 @@ export default class HttpClient {
   }
 
   private buildUrl(path: string, queryParameters?: Record<string, string>): string {
-    let url = `${this.baseUrl}${path}`;
+    let url = this.baseUrl || "";
+    if (url && !url.endsWith("/")) {
+      url += "/";
+    }
+    url += path;
     if (queryParameters) {
       const queryString = Object.keys(queryParameters)
         .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(queryParameters[key])}`)
@@ -61,7 +65,7 @@ export default class HttpClient {
   private buildRequestOptions(method: string, options: RequestOptions): http.RequestOptions {
     const requestOptions: http.RequestOptions = {
       method,
-      headers: options.headers ?? {}, // Use empty object if options.headers is undefined
+      headers: options.headers || {}, // Use empty object if options.headers is undefined
     };
     if (options.body) {
       requestOptions.headers!["Content-Type"] = "application/json";
@@ -69,12 +73,7 @@ export default class HttpClient {
     return requestOptions;
   }
 
-
-  private async send<T>(
-    method: RequestOptions["method"],
-    path: string,
-    options: RequestOptions 
-  ): Promise<T> {
+  private async send<T>(method: RequestOptions["method"], path: string, options: RequestOptions): Promise<T> {
     const url = this.buildUrl(path, options.queryParameters);
     const requestOptions = this.buildRequestOptions(method, options);
     const response = await this.sendRequest<HttpResponse<T>>(url, requestOptions as RequestOptions);
