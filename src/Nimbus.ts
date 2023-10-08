@@ -1,4 +1,4 @@
-import HttpClient from "./HttpClient"; // Import RequestOptions too
+import HttpClient from "./HttpClient";
 
 let httpClientInstance: HttpClient;
 
