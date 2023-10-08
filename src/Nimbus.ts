@@ -1,6 +1,6 @@
-import HttpClient from "./HttpClient";
+import HttpClient from "./HttpClient"; // Import RequestOptions too
 
-let httpClientInstance: HttpClient | null = null;
+let httpClientInstance: HttpClient;
 
 export default function nimbus(baseUrl: string): HttpClient {
   if (!httpClientInstance) {
