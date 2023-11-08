@@ -1,18 +1,16 @@
 # Exploratory HTTP Client
 
-> **Disclaimer: This project is intended for learning purposes only and does not serve as a substitute for fully-featured JavaScript HTTP clients. It is not actively maintained.**
-
 ## Overview
 
 This repository contains an exploratory HTTP client implemented in TypeScript. The primary objective of this project is to gain insights into building a rudimentary HTTP client that can perform GET, POST, PUT, and DELETE requests. The client is designed to interact with a simple HTTP server and handle JSON responses.
 
 ## Features
 
-- **GET Request**: The HTTP client allows you to perform GET requests to retrieve data from the server.
+- **GET Request**: This HTTP client can perform GET requests to retrieve data from the server.
 
-- **POST Request**: You can use the client to send POST requests with JSON payloads to create new resources on the server.
+- **POST Request**: It can be used to send POST requests with JSON payloads to create new resources on the server.
 
-- **PUT Request**: The HTTP client supports PUT requests to update existing resources on the server.
+- **PUT Request**: It HTTP client supports PUT requests to update existing resources on the server.
 
 - **DELETE Request**: You can use the client to send DELETE requests to remove resources from the server.
 
@@ -40,71 +38,75 @@ To use this exploratory HTTP client, follow these steps:
 
    ```bash
    npm install
-   ```
-
 Explore and experiment with the HttpClient class in the src/HttpClient.ts file. You can use the provided example usage in the same file as a starting point.
 
 To run the sample usage code, use the following command:
 
-```bash
-npm start
+```sh
+ts-node filename.ts
 ```
 Observe the output in the console to see the results of the sample GET and POST requests.
 
-## Usage 
+## Usage
 
-```typescript
-import nimbus from "./src/nimbus";
+```ts
+import HttpClient from "./src/HttpClient";
 
+// Initialize the HTTP client
+const client = new HttpClient("https://example.com");
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
+interface Todo {
+  todoId: number;
+  id: number;
+  title: string;
+  completed: boolean;
 }
 
-// GET request
-client.get<User>("http://api.example.com/users/123")
-  .then((user) => {
-    console.log(user);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+// Make a GET request
+async function getTodos() {
+  try {
+    const response = await client.get<Todo>("/todos/1");
+    console.log("Response Data:", response.data);
+    console.log("Status Code:", response.status);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 
-// POST request
-const newUser = { name: "John Doe", email: "johndoe@example.com" };
-client.post<User>("http://api.example.com/users", { body: newUser })
-  .then((createdUser) => {
-    console.log(createdUser);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+getTodos();
 
-// PUT request
-const datatTopUpdate = { email: "johndoe@example.com" };
-client.put<User>("http://api.example.com/users/2333", { body: datatTopUpdate })
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+// Make a POST request
+const newTodo: Todo = {
+  todoId: 1,
+  id: 1,
+  title: "Sample Todo",
+  completed: false,
+};
 
-
-// PUT request
-const datatTopUpdate = { email: "johndoe@example.com" };
-client.delete<User>("http://api.example.com/users",)
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+try {
+  const response = await client.post<Todo>("/todos", { body: newTodo });
+  console.log("Created Todo:", response.data);
+  console.log("Status Code:", response.status);
+} catch (error) {
+  console.error("Error:", error);
+}
 ```
 
-> Please note that this project is solely for educational purposes. If you find a way to improve or optimize it, feel free to fork this repository and experiment with the code for personal learning or exploratory purposes.
+## Future Improvements
+
+ - [x] HTTPS Support: Provide HTTPS support to the HTTP client to make secure connections.
+
+ - [] Timeout: Implement a timeout feature to handle request timeouts.
+
+ - [] Response Type: Allow specifying the expected response type for better type checking.
+
+ - [] onProgress: Implement progress tracking for long-running requests.
+
+ - [] Interceptor: Add support for request/response interceptors to modify requests or responses.
+
+ - [] Error Handling: Enhance error handling with more detailed error messages.
+
+> Disclaimer: This project is intended for learning purposes only and does not serve as a substitute for fully-featured JavaScript HTTP clients. It is not actively maintained. If you find a way to improve or optimize it, feel free to fork this repository and experiment with the code for personal learning or exploratory purposes.
 
 ## License
-This project is provided under the MIT License. Feel free to use and modify the code according to the terms of the license.
+This project is provided under the [MIT License](/LICENSE.md). Feel free to use and modify the code according to the terms of the license.
