@@ -1,4 +1,5 @@
 import * as http from "http";
+import * as https from "https";
 
 export interface RequestOptions extends http.RequestOptions {
   method: "GET" | "POST" | "PUT" | "DELETE";
@@ -19,16 +20,22 @@ export default class HttpClient {
     this.baseUrl = baseUrl;
   }
 
-  private async sendRequest<T>(url: string, options: RequestOptions): Promise<HttpResponse<T>> {
+  private async sendRequest<T>(
+    url: string,
+    options: RequestOptions
+  ): Promise<HttpResponse<T>> {
+    const protocol = url.startsWith("https:") ? https : http;
     return new Promise<HttpResponse<T>>((resolve, reject) => {
-      const req = http.request(url, options, (res) => {
+      const req = protocol.request(url, options, (res) => {
         let data = "";
+
         res.on("data", (chunk) => {
           data += chunk;
         });
+
         res.on("end", () => {
           const response: HttpResponse<T> = {
-            data: JSON.parse(data) as T,
+            data: JSON.parse(data),
             status: res.statusCode || 200,
           };
           resolve(response);
@@ -47,7 +54,10 @@ export default class HttpClient {
     });
   }
 
-  private buildUrl(path: string, queryParameters?: Record<string, string>): string {
+  private buildUrl(
+    path: string,
+    queryParameters?: Record<string, string>
+  ): string {
     let url = this.baseUrl || "";
     if (url && !url.endsWith("/")) {
       url += "/";
@@ -55,14 +65,22 @@ export default class HttpClient {
     url += path;
     if (queryParameters) {
       const queryString = Object.keys(queryParameters)
-        .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(queryParameters[key])}`)
+        .map(
+          (key) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(
+              queryParameters[key]
+            )}`
+        )
         .join("&");
       url += `?${queryString}`;
     }
     return url;
   }
 
-  private buildRequestOptions(method: string, options: RequestOptions): http.RequestOptions {
+  private buildRequestOptions(
+    method: string,
+    options: RequestOptions
+  ): http.RequestOptions {
     const requestOptions: http.RequestOptions = {
       method,
       headers: options.headers || {}, // Use empty object if options.headers is undefined
@@ -73,30 +91,59 @@ export default class HttpClient {
     return requestOptions;
   }
 
-  private async send<T>(method: RequestOptions["method"], path: string, options: RequestOptions): Promise<T> {
+  //   private async send<T>(
+  //     method: RequestOptions["method"],
+  //     path: string,
+  //     options: RequestOptions
+  //   ): Promise<HttpResponse<T>> {
+  //     const url = this.buildUrl(path, options.queryParameters);
+  //     const requestOptions = this.buildRequestOptions(method, options);
+  //     const response = await this.sendRequest<HttpResponse<T>>(
+  //       url,
+  //       requestOptions as RequestOptions
+  //     );
+  //     return response;
+  //   }
+
+  private async send<T>(
+    method: RequestOptions["method"],
+    path: string,
+    options: RequestOptions
+  ): Promise<HttpResponse<T>> {
     const url = this.buildUrl(path, options.queryParameters);
     const requestOptions = this.buildRequestOptions(method, options);
-    const response = await this.sendRequest<HttpResponse<T>>(url, requestOptions as RequestOptions);
-    return this.parseResponseBody<T>(response.data);
+    const response = await this.sendRequest<T>(
+      url,
+      requestOptions as RequestOptions
+    );
+    return response; 
   }
 
-  public async get<T>(path: string, options: RequestOptions = { method: "GET" }): Promise<T> {
+  public async get<T>(
+    path: string,
+    options: RequestOptions = { method: "GET" },
+  ): Promise<HttpResponse<T>> {
     return this.send<T>("GET", path, options);
   }
 
-  public async post<T>(path: string, options: RequestOptions = { method: "POST" }): Promise<T> {
+  public async post<T>(
+    path: string,
+    options: RequestOptions = { method: "POST" },
+  ): Promise<HttpResponse<T>> {
     return this.send<T>("POST", path, options);
   }
 
-  public async put<T>(path: string, options: RequestOptions = { method: "PUT" }): Promise<T> {
+  public async put<T>(
+    path: string,
+    options: RequestOptions = { method: "PUT" },
+  ): Promise<HttpResponse<T>> {
     return this.send<T>("PUT", path, options);
   }
 
-  public async delete<T>(path: string, options: RequestOptions = { method: "DELETE" }): Promise<T> {
+  public async delete<T>(
+    path: string,
+    options: RequestOptions = { method: "DELETE" },
+  ): Promise<HttpResponse<T>> {
     return this.send<T>("DELETE", path, options);
-  }
-
-  private parseResponseBody<T>(response: any): T {
-    return JSON.parse(response);
   }
 }
