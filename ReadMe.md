@@ -96,15 +96,15 @@ try {
 
  - [x] HTTPS Support: Provide HTTPS support to the HTTP client to make secure connections.
 
- - [] Timeout: Implement a timeout feature to handle request timeouts.
+ - [ ] Timeout: Implement a timeout feature to handle request timeouts.
 
- - [] Response Type: Allow specifying the expected response type for better type checking.
+ - [ ] Response Type: Allow specifying the expected response type for better type checking.
 
- - [] onProgress: Implement progress tracking for long-running requests.
+ - [ ] onProgress: Implement progress tracking for long-running requests.
 
- - [] Interceptor: Add support for request/response interceptors to modify requests or responses.
+ - [ ] Interceptor: Add support for request/response interceptors to modify requests or responses.
 
- - [] Error Handling: Enhance error handling with more detailed error messages.
+ - [ ] Error Handling: Enhance error handling with more detailed error messages.
 
 > Disclaimer: This project is intended for learning purposes only and does not serve as a substitute for fully-featured JavaScript HTTP clients. It is not actively maintained. If you find a way to improve or optimize it, feel free to fork this repository and experiment with the code for personal learning or exploratory purposes.
 
