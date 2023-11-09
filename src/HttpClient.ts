@@ -1,5 +1,6 @@
 import * as http from "http";
 import * as https from "https";
+import { NimbusError } from "./NimbusError";
 
 export interface RequestOptions extends http.RequestOptions {
   method: "GET" | "POST" | "PUT" | "DELETE";
@@ -34,11 +35,22 @@ export default class HttpClient {
         });
 
         res.on("end", () => {
-          const response: HttpResponse<T> = {
-            data: JSON.parse(data),
-            status: res.statusCode || 200,
-          };
-          resolve(response);
+          if (
+            res.statusCode &&
+            (res.statusCode < 400 || res.statusCode >= 600)
+          ) {
+            const response: HttpResponse<T> = {
+              data: JSON.parse(data),
+              status: res.statusCode || 200,
+            };
+            resolve(response);
+          } else {
+            reject(
+              new NimbusError(
+                `Request failed with status code: ${res.statusCode}`
+              )
+            );
+          }
         });
       });
 
@@ -91,20 +103,6 @@ export default class HttpClient {
     return requestOptions;
   }
 
-  //   private async send<T>(
-  //     method: RequestOptions["method"],
-  //     path: string,
-  //     options: RequestOptions
-  //   ): Promise<HttpResponse<T>> {
-  //     const url = this.buildUrl(path, options.queryParameters);
-  //     const requestOptions = this.buildRequestOptions(method, options);
-  //     const response = await this.sendRequest<HttpResponse<T>>(
-  //       url,
-  //       requestOptions as RequestOptions
-  //     );
-  //     return response;
-  //   }
-
   private async send<T>(
     method: RequestOptions["method"],
     path: string,
@@ -116,33 +114,33 @@ export default class HttpClient {
       url,
       requestOptions as RequestOptions
     );
-    return response; 
+    return response;
   }
 
   public async get<T>(
     path: string,
-    options: RequestOptions = { method: "GET" },
+    options: RequestOptions = { method: "GET" }
   ): Promise<HttpResponse<T>> {
     return this.send<T>("GET", path, options);
   }
 
   public async post<T>(
     path: string,
-    options: RequestOptions = { method: "POST" },
+    options: RequestOptions = { method: "POST" }
   ): Promise<HttpResponse<T>> {
     return this.send<T>("POST", path, options);
   }
 
   public async put<T>(
     path: string,
-    options: RequestOptions = { method: "PUT" },
+    options: RequestOptions = { method: "PUT" }
   ): Promise<HttpResponse<T>> {
     return this.send<T>("PUT", path, options);
   }
 
   public async delete<T>(
     path: string,
-    options: RequestOptions = { method: "DELETE" },
+    options: RequestOptions = { method: "DELETE" }
   ): Promise<HttpResponse<T>> {
     return this.send<T>("DELETE", path, options);
   }
