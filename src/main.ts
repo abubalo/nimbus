@@ -1,29 +1,25 @@
-// Example usage
-import HttpClient from "./HttpClient"
+import nimbus from "./nimbus";
 
-
-const client = new HttpClient("http://api.example.com");
-// GET request
-client.get<User>("/users/123")
-  .then((user) => {
-    console.log(user);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
-
-// POST request
-const newUser = { name: "John Doe", email: "johndoe@example.com" };
-client.post<User>("/users", { body: newUser })
-  .then((createdUser) => {
-    console.log(createdUser);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
+// Initial the http client
+//The intialization takes baseURL optional paramerters
+const client = nimbus();
+interface Todo {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean
 }
+
+async function getTodos() {
+  try {
+    const response = await client.get<Todo>("https://jsonplaceholder.typicode.com/todos/1");
+    console.log("Response:", response.data);
+    console.log("Response:", !!response.data);
+    console.log("Response:", response.status);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+getTodos();
+
