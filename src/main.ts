@@ -1,4 +1,4 @@
-import nimbus from "./nimbus";
+import nimbus, {NimbusError} from "./nimbus";
 
 // Initial the http client
 //The intialization takes baseURL optional paramerters
@@ -22,4 +22,19 @@ async function getTodos() {
 }
 
 getTodos();
+
+// Example usage:
+try {
+  // Simulate an error, e.g., an HTTP request fails
+  throw new NimbusError("Custom error message", 404, {
+    someData: "additional information",
+  });
+} catch (error) {
+  if (error instanceof NimbusError) {
+    console.error(error.name); // "NimbusError"
+    console.error(error.message); // "Custom error message"
+    console.error(error.status); // 404
+    console.error(error.response); // { someData: 'additional information' }
+  }
+}
 
