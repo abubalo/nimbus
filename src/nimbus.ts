@@ -1,10 +1,13 @@
 import HttpClient from "./HttpClient";
+import { NimbusError } from "./NimbusError";
 
 let httpClientInstance: HttpClient;
 
-export default function nimbus(baseUrl?: string): HttpClient {
+function nimbus(baseUrl?: string): HttpClient {
   if (!httpClientInstance) {
     httpClientInstance = new HttpClient(baseUrl);
   }
   return httpClientInstance;
 }
+
+export { nimbus as defualt, NimbusError };
