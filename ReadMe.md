@@ -38,75 +38,156 @@ To use this exploratory HTTP client, follow these steps:
 
    ```bash
    npm install
-Explore and experiment with the HttpClient class in the src/HttpClient.ts file. You can use the provided example usage in the same file as a starting point.
+   Explore and experiment with the HttpClient class in the src/HttpClient.ts file. You can use the provided example usage in the same file as a starting point.
+   ```
 
 To run the sample usage code, use the following command:
 
 ```sh
 ts-node filename.ts
 ```
+
 Observe the output in the console to see the results of the sample GET and POST requests.
 
 ## Usage
 
-```ts
+To use the `HttpClient` class, follow these examples for making GET, POST, PUT, and DELETE requests along with error handling.
+
+### Initialize the HTTP Client
+
+```typescript
 import HttpClient from "./src/HttpClient";
 
-// Initialize the HTTP client
-const client = new HttpClient("https://example.com");
+// Initialize the HTTP client with the base URL
+const client = new HttpClient("https://jsonplaceholder.typicode.com");
+```
 
+Make a `GET` Request.
+
+```ts
 interface Todo {
-  todoId: number;
+  userId: number;
   id: number;
   title: string;
   completed: boolean;
 }
 
-// Make a GET request
 async function getTodos() {
   try {
     const response = await client.get<Todo>("/todos/1");
-    console.log("Response Data:", response.data);
-    console.log("Status Code:", response.status);
+    console.log("GET Request Response Data:", response.data);
+    console.log("GET Request Status Code:", response.status);
   } catch (error) {
-    console.error("Error:", error);
+    console.error("GET Request Error:", error);
   }
 }
 
 getTodos();
+```
 
-// Make a POST request
+Make a `POST` Request
+
+```ts
 const newTodo: Todo = {
-  todoId: 1,
+  userId: 1,
   id: 1,
   title: "Sample Todo",
   completed: false,
 };
 
-try {
-  const response = await client.post<Todo>("/todos", { body: newTodo });
-  console.log("Created Todo:", response.data);
-  console.log("Status Code:", response.status);
-} catch (error) {
-  console.error("Error:", error);
+async function createTodo() {
+  try {
+    const response = await client.post<Todo>("/todos", { body: newTodo });
+    console.log("POST Request Response Data:", response.data);
+    console.log("POST Request Status Code:", response.status);
+  } catch (error) {
+    console.error("POST Request Error:", error);
+  }
 }
+
+createTodo();
+```
+
+Make a `PUT` Request
+
+```ts
+const updatedTodo: Todo = {
+  userId: 1,
+  id: 1,
+  title: "Updated Todo",
+  completed: true,
+};
+
+async function updateTodo() {
+  try {
+    const response = await client.put<Todo>("/todos/1", { body: updatedTodo });
+    console.log("PUT Request Response Data:", response.data);
+    console.log("PUT Request Status Code:", response.status);
+  } catch (error) {
+    console.error("PUT Request Error:", error);
+  }
+}
+
+updateTodo();
+```
+
+Make a `PATCH` Request
+
+```ts
+// Define the updated data for the PATCH request
+const updatedData: Partial<Todo> = {
+  title: "Updated Title",
+};
+
+async function patchData() {
+  try {
+    const response = await client.patch<Todo>("/todos/1", {
+      body: updatedData,
+    });
+    console.log("PATCH Request Response Data:", response.data);
+    console.log("PATCH Request Status Code:", response.status);
+  } catch (error) {
+    console.error("PATCH Request Error:", error);
+  }
+}
+
+patchData();
+```
+
+Make a `DELETE` Request
+
+```ts
+async function deleteTodo() {
+  try {
+    const response = await client.delete<Todo>("/todos/1");
+    console.log("DELETE Request Response Data:", response.data);
+    console.log("DELETE Request Status Code:", response.status);
+  } catch (error) {
+    console.error("DELETE Request Error:", error);
+  }
+}
+
+deleteTodo();
 ```
 
 ## Future Improvements
 
- - [x] HTTPS Support: Provide HTTPS support to the HTTP client to make secure connections.
+- [x] HTTPS Support: Provide HTTPS support to the HTTP client to make secure connections.
 
- - [ ] Timeout: Implement a timeout feature to handle request timeouts.
+- [x] PATCH method Support: Provide support to the HTTP client to make request.
 
- - [ ] Response Type: Allow specifying the expected response type for better type checking.
+- [ ] Timeout: Implement a timeout feature to handle request timeouts.
 
- - [ ] onProgress: Implement progress tracking for long-running requests.
+- [ ] Response Type: Allow specifying the expected response type for better type checking.
 
- - [ ] Interceptor: Add support for request/response interceptors to modify requests or responses.
+- [ ] onProgress: Implement progress tracking for long-running requests.
 
- - [ ] Error Handling: Enhance error handling with more detailed error messages.
+- [ ] Interceptor: Add support for request/response interceptors to modify requests or responses.
+
+- [x] Error Handling: Enhance error handling with more detailed error messages.
 
 > Disclaimer: This project is intended for learning purposes only and does not serve as a substitute for fully-featured JavaScript HTTP clients. It is not actively maintained. If you find a way to improve or optimize it, feel free to fork this repository and experiment with the code for personal learning or exploratory purposes.
 
 ## License
+
 This project is provided under the [MIT License](/LICENSE.md). Feel free to use and modify the code according to the terms of the license.
