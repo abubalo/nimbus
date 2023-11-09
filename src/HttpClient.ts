@@ -37,11 +37,11 @@ export default class HttpClient {
         res.on("end", () => {
           if (
             res.statusCode &&
-            (res.statusCode < 400 || res.statusCode >= 600)
+            (res.statusCode < 400 || res.statusCode < 600)
           ) {
             const response: HttpResponse<T> = {
               data: JSON.parse(data),
-              status: res.statusCode || 200,
+              status: res.statusCode,
             };
             resolve(response);
           } else {
