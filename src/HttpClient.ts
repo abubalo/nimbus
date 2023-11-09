@@ -3,7 +3,7 @@ import * as https from "https";
 import { NimbusError } from "./NimbusError";
 
 export interface RequestOptions extends http.RequestOptions {
-  method: "GET" | "POST" | "PUT" | "DELETE";
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   headers?: Record<string, string>;
   queryParameters?: Record<string, string>;
   body?: unknown;
@@ -136,6 +136,12 @@ export default class HttpClient {
     options: RequestOptions = { method: "PUT" }
   ): Promise<HttpResponse<T>> {
     return this.send<T>("PUT", path, options);
+  }
+  public async patch<T>(
+    path: string,
+    options: RequestOptions = { method: "PATCH" }
+  ): Promise<HttpResponse<T>> {
+    return this.send<T>("PATCH", path, options);
   }
 
   public async delete<T>(
