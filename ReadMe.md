@@ -174,7 +174,7 @@ deleteTodo();
 
 - [x] HTTPS Support: Provide HTTPS support to the HTTP client to make secure connections.
 
-- [x] PATCH method Support: Provide support to the HTTP client to make PATCH request.
+- [x] PATCH method Support: Provide support to the HTTP client to make a PATCH request.
 
 - [ ] Timeout: Implement a timeout feature to handle request timeouts.
 
