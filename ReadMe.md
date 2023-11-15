@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains an exploratory HTTP client implemented in TypeScript. The primary objective of this project is to gain insights into building a rudimentary HTTP client that can perform GET, POST, PUT, and DELETE requests. The client is designed to interact with a simple HTTP server and handle JSON responses.
+This repository contains an exploratory HTTP client Which I name 'nimbus', implemented in TypeScript. The primary objective of this project is to gain insights into building a rudimentary HTTP client that can perform GET, POST, PUT, and DELETE requests. The client is designed to interact with a simple HTTP server and handle variaty of responses such as JSON, Plain text, and XML.
 
 ## Features
 
@@ -10,7 +10,7 @@ This repository contains an exploratory HTTP client implemented in TypeScript. T
 
 - **POST Request**: It can be used to send POST requests with JSON payloads to create new resources on the server.
 
-- **PUT Request**: It HTTP client supports PUT requests to update existing resources on the server.
+- **PUT & PATCH Request**: It supports PUT and PATCH requests to update existing resources on the server.
 
 - **DELETE Request**: You can use the client to send DELETE requests to remove resources from the server.
 
@@ -176,13 +176,13 @@ deleteTodo();
 
 - [x] PATCH method Support: Provide support to the HTTP client to make a PATCH request.
 
-- [ ] Timeout: Implement a timeout feature to handle request timeouts.
+- [x] Timeout: Implement a timeout feature to handle request timeouts.
 
-- [ ] Response Type: Allow specifying the expected response type for better type checking.
+- [x] Response Type: Allow specifying the expected response type for better type checking.
 
-- [ ] onProgress: Implement progress tracking for long-running requests.
+- [x] onProgress: Implement progress tracking for long-running requests.
 
-- [ ] Interceptor: Add support for request/response interceptors to modify requests or responses.
+- [x] Interceptor: Add support for request/response interceptors to modify requests or responses.
 
 - [x] Error Handling: Enhance error handling with more detailed error messages.
 
