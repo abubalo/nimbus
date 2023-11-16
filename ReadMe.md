@@ -184,7 +184,7 @@ deleteTodo();
 
 - [x] **onProgress**: Implement progress tracking for long-running requests.
 
-- [x] **Interceptor: Add support for request/response interceptors to modify requests or responses.
+- [x] **Interceptor**: Add support for request/response interceptors to modify requests or responses.
 
 - [x] **Error Handling**: Enhance error handling with more detailed error messages.
 
