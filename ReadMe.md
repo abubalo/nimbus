@@ -180,7 +180,7 @@ deleteTodo();
 
 - [x] **Timeout**: Implement a timeout feature to handle request timeouts.
 
-- [x] **Response Type: Allow specifying the expected response type for better type checking.
+- [x] **Response Type**: Allow specifying the expected response type for better type checking.
 
 - [x] **onProgress**: Implement progress tracking for long-running requests.
 
