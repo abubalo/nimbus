@@ -4,8 +4,7 @@ export class NimbusError<T> extends Error {
   response: T | undefined;
   constructor(message: string, status?: number, response?: T) {
     super(message);
-
-    // Set ame of the custom error class
+    
     this.name = "NimbusError";
 
     this.status = status; // HTTP status code
