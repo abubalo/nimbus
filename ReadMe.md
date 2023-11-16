@@ -16,13 +16,19 @@ This repository contains an exploratory HTTP client, `nimbus`, implemented in Ty
 
 While the exploratory HTTP client provides basic functionalities for making HTTP requests, it comes with several limitations:
 
-- **Simplified Functionality**: The client is intentionally kept minimal to focus on the fundamentals of building an HTTP client. It lacks many features commonly found in full-fledged HTTP clients, such as request retries, and caching.
+- **Retry Mechanism**: The client lacks an automated retry mechanism for failed requests, which could bolster its resilience in the face of intermittent network issues.
 
-- **Error Handling**: The error handling mechanism is basic and might not cover all possible error scenarios. For production-ready applications, more robust error handling is necessary.
+- **Caching Strategies**: There's no provision for caching responses, which could enhance performance by reducing redundant network requests for frequently accessed resources.
 
-- **Security Considerations**: The HTTP client does not implement security measures like HTTPS. In real-world applications, using HTTPS is crucial to ensure data privacy and security.
+- **Advanced Error Handling**: While basic error handling exists, it may not cover all potential edge cases, and improving it to manage various error scenarios more comprehensively would increase reliability.
 
-- **No Configuration Options**: The client does not support configuration options like timeout settings, custom headers, or authentication mechanisms. These features are typically essential in production-ready HTTP clients.
+- **Authentication Support**: The current implementation doesn't support various authentication mechanisms like OAuth, API keys, or bearer tokens, which are essential for secure API interactions.
+
+- **Custom Header Management**: Although headers are handled, extending support for setting custom headers easily or managing a broader range of headers dynamically could add flexibility to API interactions.
+
+- **Streaming and Chunked Responses**: Handling streaming or chunked responses might not be fully supported, limiting the client's capability in scenarios dealing with large or streaming responses.
+
+- **Request Transformation**: The client currently lacks functionalities for modifying request payloads or structure before sending, which could offer more flexibility in accommodating various API requirements.
 
 ## Getting Started
 
@@ -34,14 +40,18 @@ To use this exploratory HTTP client, follow these steps:
 
 3. Install the required dependencies by running:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
 To run the sample usage code, use the following command:
 
 ```sh
 ts-node filename.ts
+```
+If you are using javascript, you use node.js to run the file:
+```sh
+node filename.js
 ```
 
 Observe the output in the console to see the results of the sample GET and POST requests.
@@ -49,8 +59,6 @@ Observe the output in the console to see the results of the sample GET and POST 
 ## Usage
 
 To use the `HttpClient` class, follow these examples for making GET, POST, PUT, and DELETE requests along with error handling.
-
-### Initialize the HTTP Client
 
 ```typescript
 import nimus from "./src/nimbus";
