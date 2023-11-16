@@ -1,13 +1,16 @@
 ## Nimbus
 
 
-This repository contains an exploratory HTTP client Which I name `nimbus`, implemented in TypeScript. The primary objective of this project is to gain insights into building a rudimentary HTTP client that can perform GET, POST, PUT, and DELETE requests. The client is designed to interact with a simple HTTP server and handle a variety of responses such as JSON, Plain text, and XML.
+This repository contains an exploratory HTTP client, `nimbus`, implemented in TypeScript. The primary objective of this project is to gain insights into building a rudimentary HTTP client capable of performing GET, POST, PUT, and DELETE requests. The client is designed to interact with a simple HTTP server and handle various response types such as JSON, Plain text, and XML.
 
 ## Features
 
-- Supports all HTTP methods (GET, POST, PUT, PATCH, DELETE)
-- Can be configured with a base URL, headers, and interceptors
-- Can handle different response types (JSON, text, XML)
+- Supports all HTTP methods: GET, POST, PUT, PATCH, DELETE
+- Configurable: Can be set up with a base URL, headers, and interceptors
+- Response Handling: Capable of managing different response types (JSON, text, XML)
+- HTTPS Support: Provides secure connections through HTTPS
+- Timeout Mechanism: Implements request timeout feature for handling timeouts
+- Interceptors: Supports request and response interceptors to modify requests or responses
 
 ## Limitations
 
@@ -33,7 +36,6 @@ To use this exploratory HTTP client, follow these steps:
 
    ```bash
    npm install
-   Explore and experiment with the HttpClient class in the src/HttpClient.ts file. You can use the provided example usage in the same file as a starting point.
    ```
 
 To run the sample usage code, use the following command:
@@ -51,10 +53,7 @@ To use the `HttpClient` class, follow these examples for making GET, POST, PUT, 
 ### Initialize the HTTP Client
 
 ```typescript
-import HttpClient from "./src/HttpClient";
-
-// Initialize the HTTP client with the base URL
-const client = new HttpClient("https://jsonplaceholder.typicode.com");
+import nimus from "./src/nimbus";
 ```
 
 Make a `GET` Request.
@@ -69,7 +68,7 @@ interface Todo {
 
 async function getTodos() {
   try {
-    const response = await client.get<Todo>("/todos/1");
+    const response = await nimbus.get<Todo>("/todos/1");
     console.log("GET Request Response Data:", response.data);
     console.log("GET Request Status Code:", response.status);
   } catch (error) {
@@ -92,7 +91,7 @@ const newTodo: Todo = {
 
 async function createTodo() {
   try {
-    const response = await client.post<Todo>("/todos", { body: newTodo });
+    const response = await nimbus.post<Todo>("/todos", { body: newTodo });
     console.log("POST Request Response Data:", response.data);
     console.log("POST Request Status Code:", response.status);
   } catch (error) {
@@ -115,7 +114,7 @@ const updatedTodo: Todo = {
 
 async function updateTodo() {
   try {
-    const response = await client.put<Todo>("/todos/1", { body: updatedTodo });
+    const response = await nimbus.put<Todo>("/todos/1", { body: updatedTodo });
     console.log("PUT Request Response Data:", response.data);
     console.log("PUT Request Status Code:", response.status);
   } catch (error) {
@@ -136,7 +135,7 @@ const updatedData: Partial<Todo> = {
 
 async function patchData() {
   try {
-    const response = await client.patch<Todo>("/todos/1", {
+    const response = await nimbus.patch<Todo>("/todos/1", {
       body: updatedData,
     });
     console.log("PATCH Request Response Data:", response.data);
@@ -154,7 +153,7 @@ Make a `DELETE` Request
 ```ts
 async function deleteTodo() {
   try {
-    const response = await client.delete<Todo>("/todos/1");
+    const response = await nimbus.delete<Todo>("/todos/1");
     console.log("DELETE Request Response Data:", response.data);
     console.log("DELETE Request Status Code:", response.status);
   } catch (error) {
