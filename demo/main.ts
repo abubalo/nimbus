@@ -1,11 +1,10 @@
-// import nimbus, {NimbusError} from "./nimbus.temp";
-import Httpclient from "../src/HttpClient.temp";
-// import Httpclient from "../src/HttpClient"
+import nimbus, {NimbusError} from "../src/nimbus";
+import Httpclient from "../src/HttpClient"
 
 // Initial the http client
 //The intialization takes baseURL optional paramerters
 // const client = nimbus();
-const nimbus = new Httpclient();
+// const nimbus = new Httpclient();
 interface Todo {
   userId: number;
   id: number;
@@ -45,18 +44,3 @@ async function createTodos() {
 
 createTodos();
 
-// // Example usage:
-// try {
-//   // Simulate an error, e.g., an HTTP request fails
-//   throw new NimbusError("Custom error message", 404, {
-//     someData: "additional information",
-//   });
-// } catch (error) {
-//   if (error instanceof NimbusError) {
-//     console.error(error.name); // "NimbusError"
-//     console.error(error.message); // "Custom error message"
-//     console.error(error.status); // 404
-//     console.error(error.response); // { someData: 'additional information' }
-//   }
-// }
-// ETIMEDOUT
