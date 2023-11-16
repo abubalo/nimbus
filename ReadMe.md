@@ -1,28 +1,23 @@
-# Exploratory HTTP Client
+## Nimbus
 
-## Overview
 
-This repository contains an exploratory HTTP client Which I name 'nimbus', implemented in TypeScript. The primary objective of this project is to gain insights into building a rudimentary HTTP client that can perform GET, POST, PUT, and DELETE requests. The client is designed to interact with a simple HTTP server and handle variaty of responses such as JSON, Plain text, and XML.
+This repository contains an exploratory HTTP client Which I name `nimbus`, implemented in TypeScript. The primary objective of this project is to gain insights into building a rudimentary HTTP client that can perform GET, POST, PUT, and DELETE requests. The client is designed to interact with a simple HTTP server and handle a variety of responses such as JSON, Plain text, and XML.
 
 ## Features
 
-- **GET Request**: This HTTP client can perform GET requests to retrieve data from the server.
-
-- **POST Request**: It can be used to send POST requests with JSON payloads to create new resources on the server.
-
-- **PUT & PATCH Request**: It supports PUT and PATCH requests to update existing resources on the server.
-
-- **DELETE Request**: You can use the client to send DELETE requests to remove resources from the server.
+- Supports all HTTP methods (GET, POST, PUT, PATCH, DELETE)
+- Can be configured with a base URL, headers, and interceptors
+- Can handle different response types (JSON, text, XML)
 
 ## Limitations
 
 While the exploratory HTTP client provides basic functionalities for making HTTP requests, it comes with several limitations:
 
-- **Simplified Functionality**: The client is intentionally kept minimal to focus on the fundamentals of building an HTTP client. It lacks many features commonly found in full-fledged HTTP clients, such as interceptors, request retries, and caching.
+- **Simplified Functionality**: The client is intentionally kept minimal to focus on the fundamentals of building an HTTP client. It lacks many features commonly found in full-fledged HTTP clients, such as request retries, and caching.
 
 - **Error Handling**: The error handling mechanism is basic and might not cover all possible error scenarios. For production-ready applications, more robust error handling is necessary.
 
-- **Security Considerations**: The client does not implement security measures like HTTPS. In real-world applications, using HTTPS is crucial to ensure data privacy and security.
+- **Security Considerations**: The HTTP client does not implement security measures like HTTPS. In real-world applications, using HTTPS is crucial to ensure data privacy and security.
 
 - **No Configuration Options**: The client does not support configuration options like timeout settings, custom headers, or authentication mechanisms. These features are typically essential in production-ready HTTP clients.
 
@@ -172,19 +167,21 @@ deleteTodo();
 
 ## Future Improvements
 
-- [x] HTTPS Support: Provide HTTPS support to the HTTP client to make secure connections.
+- [x] **HTTPS Support**: Provide HTTPS support to the HTTP client to make secure connections.
 
-- [x] PATCH method Support: Provide support to the HTTP client to make a PATCH request.
+- [x] **PATCH method Support**: Provide support to the HTTP client to make a PATCH request.
 
-- [x] Timeout: Implement a timeout feature to handle request timeouts.
+- [x] **Timeout**: Implement a timeout feature to handle request timeouts.
 
-- [x] Response Type: Allow specifying the expected response type for better type checking.
+- [x] **Response Type: Allow specifying the expected response type for better type checking.
 
-- [x] onProgress: Implement progress tracking for long-running requests.
+- [x] **onProgress**: Implement progress tracking for long-running requests.
 
-- [x] Interceptor: Add support for request/response interceptors to modify requests or responses.
+- [x] **Interceptor: Add support for request/response interceptors to modify requests or responses.
 
-- [x] Error Handling: Enhance error handling with more detailed error messages.
+- [x] **Error Handling**: Enhance error handling with more detailed error messages.
+
+- [ ] **Multipart/form-data support**: Allow the transmission of files alongside other form fields.
 
 > Disclaimer: This project is intended for learning purposes only and does not serve as a substitute for fully-featured JavaScript HTTP clients. It is not actively maintained. If you find a way to improve or optimize it, feel free to fork this repository and experiment with the code for personal learning or exploratory purposes.
 
