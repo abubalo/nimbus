@@ -60,7 +60,7 @@ export default class HttpClient {
 
     const instance = new HttpClient(baseURL);
 
-    // Todo: Add logic to each config
+    // Todo: Implement logic for each config
     if (headers) {
       // ... handle headers
     }
