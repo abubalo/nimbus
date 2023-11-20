@@ -4,20 +4,21 @@ import { NimbusError } from "./NimbusError";
 import { Config, HttpResponse, RequestOptions } from "../types";
 
 /**
- * A class for making HTTP request
+ * An HTTP class for making requests.
  */
 export default class HttpClient {
   private baseUrl: string | undefined;
   private static instance: HttpClient | null;
   /**
-   * @params baseUrl
+   * construct an instance of HttpClient.
+   * @params baseUrl Optional base URL for request.
    */
   constructor(baseUrl?: string) {
     this.baseUrl = baseUrl;
   }
   /**
-   * singleton instance of HttpClient
-   * @returns instance of
+   * Returns a singleton instance of HttpClient.
+   * @returns An instance HttpClient
    */
   public static getInstance(): HttpClient {
     if (!this.instance) {
@@ -28,25 +29,25 @@ export default class HttpClient {
   }
 
   /**
-   * Simple URL validation method
-   * @param url the URL to validate
-   * @returns boolean based on validatity of the URL
+   * Validates the provided URL
+   * @param url The URL to validate
+   * @returns A boolean indicating URL validity
    */
   private isValidUrl(url: string): boolean {
     try {
       new URL(url); //Tries to create a URL object from the provided URL
-      return true; //If succesfull, return true
+      return true; // Returns true if succussfull
     } catch (error) {
-      return false; // If the URL is invliad, return false
+      return false; // Returns false if URL is invalid
     }
   }
 
   /**
-   *
-   * @param config
-   * @returns
+   *  Creates an Instance of HttpClient with configuration settings.
+   * @param config Configuration settings for the HttpClient.
+   * @returns An instance of HttpClient with the provided configuration.
    */
-  public static create(config: Config): HttpClient {
+  public static create<T>(config: Config<T>): HttpClient {
     const {
       baseURL,
       withCredential,
@@ -70,6 +71,12 @@ export default class HttpClient {
     return instance;
   }
 
+  /**
+   * Sends HTTP request to specified URL with specified options.
+   * @param url The URL to send the request to.
+   * @param options Options for request.
+   * @returns A Promise resolving to HTTP response.
+   */
   private async sendRequest<T>(
     url: string,
     options: RequestOptions<T>
@@ -147,7 +154,12 @@ export default class HttpClient {
       }
     });
   }
-
+/**
+ * Builds a complete URL based on the base URL and path.
+ * @param path Path to be appended to the URL.
+ * @param queryParameters Optional query parameters.
+ * @returns The complete URL.
+ */
   private buildUrl(
     path: string,
     queryParameters?: Record<string, string>
@@ -170,7 +182,12 @@ export default class HttpClient {
 
     return url;
   }
-
+/**
+ * Builds Request option for HTTP request.
+ * @param method The HTTP method request for request.
+ * @param options Optionas for request.
+ * @returns Request for making an HTTP request.
+ */
   private buildRequestOptions<T>(
     method: string,
     options: RequestOptions<T>
@@ -209,7 +226,14 @@ export default class HttpClient {
   ) {
     this.responseInterceptor = interceptor;
   }
-
+/**
+ * Sends Request over HTTP/HTTPs connection.
+ * @param method The HTTP method for the request.
+ * @param path The ath to be appended to the baseURL.
+ * @param options Options for the Request.
+ * @param body Request body.
+ * @returns HTTP response.
+ */
   private async send<T>(
     method: RequestOptions<T>["method"],
     path: string,
@@ -253,7 +277,10 @@ export default class HttpClient {
       throw error;
     }
   }
-
+/**
+ * Handles HTTP error based on the response.
+ * @param res The HTTP to handle errors for.
+ */
   private handleHttpError<T>(res: http.IncomingMessage): void {
     let errorResponse: HttpResponse<Error>;
 
@@ -284,13 +311,25 @@ export default class HttpClient {
     throw errorResponse;
   }
 
+  /**
+   * Initiates a GET request to the specified URL.
+   * @param path The path to send a request to.
+   * @param options Options for the GET Request.
+   * @returns A Promise resolving to HTTP response.
+   */
   public async get<T>(
     path: string,
     options: RequestOptions<T> = { method: "GET" }
   ): Promise<HttpResponse<T>> {
     return this.send<T>("GET", path, options);
   }
-
+/**
+ * Initiates a POST request to specified URL.
+ * @param path Path to senf a request to.
+ * @param body HTTP body contain data object.
+ * @param options Options for the POST request. 
+ * @returns A promise resolving to HTTP response.
+ */
   public async post<T>(
     path: string,
     body?: T,
@@ -298,7 +337,13 @@ export default class HttpClient {
   ): Promise<HttpResponse<T>> {
     return this.send<T>("POST", path, options, body);
   }
-
+/**
+ * Initiates a PUT request to specified URL.
+ * @param path Path to senf a request to.
+ * @param body HTTP body contain data object.
+ * @param options Options for the POST request.
+ * @returns A promise resolving to HTTP response.
+ */
   public async put<T>(
     path: string,
     body?: T,
@@ -306,6 +351,13 @@ export default class HttpClient {
   ): Promise<HttpResponse<T>> {
     return this.send<T>("PUT", path, options, body);
   }
+  /**
+ * Initiates a PATCH request to specified URL.
+ * @param path Path to senf a request to.
+ * @param body HTTP body contain data object.
+ * @param options Options for the PATCH request .
+ * @returns A promise resolving to HTTP response.
+ */
   public async patch<T>(
     path: string,
     body?: T,
@@ -313,7 +365,12 @@ export default class HttpClient {
   ): Promise<HttpResponse<T>> {
     return this.send<T>("PATCH", path, options, body);
   }
-
+ /**
+   * Initiates a DELETE request to the specified URL.
+   * @param path The path to send a request to.
+   * @param options Options for the DELETE Request.
+   * @returns A Promise resolving to HTTP response.
+   */
   public async delete<T>(
     path: string,
     options: RequestOptions<T> = { method: "DELETE" }
@@ -321,6 +378,12 @@ export default class HttpClient {
     return this.send<T>("DELETE", path, options);
   }
 
+  /**
+   * Parses HTTP response body base on response type.
+   * @param response The response body.
+   * @param responseType The expected response type.
+   * @returns A parsed response based on specified type.
+   */
   private async parseResponseBody<T>(
     response: any,
     responseType: string | undefined
