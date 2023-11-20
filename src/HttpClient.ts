@@ -10,7 +10,7 @@ export default class HttpClient {
   private baseUrl: string | undefined;
   private static instance: HttpClient | null;
   /**
-   * construct an instance of HttpClient.
+   * constructs an instance of HttpClient.
    * @params baseUrl Optional base URL for request.
    */
   constructor(baseUrl?: string) {
