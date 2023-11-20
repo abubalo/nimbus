@@ -3,11 +3,11 @@ import * as http from "https";
 /**
  * Respresent the option for making HTTP requests
  */
-export interface RequestOptions extends http.RequestOptions {
+export interface RequestOptions<T> extends http.RequestOptions {
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"; // Allowed HTTP methods
   headers?: Record<string, string>;
   queryParameters?: Record<string, string>;
-  body?: unknown;
+  body?: T;
   responseType?: "json" | "text" | "xml"; // Specify expected response format
   contentType?:
     | "application/json"
@@ -18,11 +18,11 @@ export interface RequestOptions extends http.RequestOptions {
   onProgress?: (progress: number) => void; // Progress tracking callback
   interceptors?: {
     request?: (
-      options: RequestOptions
-    ) => RequestOptions | Promise<RequestOptions>;
+      options: RequestOptions<T>
+    ) => RequestOptions<T> | Promise<RequestOptions<T>>;
     response?: (
-      response: HttpResponse<any>
-    ) => HttpResponse<any> | Promise<HttpResponse<any>>;
+      response: HttpResponse<T>
+    ) => HttpResponse<T> | Promise<HttpResponse<T>>;
   };
 }
 
@@ -31,7 +31,7 @@ export interface RequestOptions extends http.RequestOptions {
  */
 export interface HttpResponse<T> {
   data: T; //Actual HTTP response data
-  status: number; // The HTTP status code of the response
+  status?: number; // The HTTP status code of the response
   statusMessage?: string; // The HTTP statusMessage corresponding the status
   headers: Record<string, any>; //An object containing the response headers sent by the server.
 }
@@ -52,16 +52,16 @@ export interface Config {
 declare global {
   interface Window {
     nimbus: {
-      get<T>(path: string, options?: RequestOptions): Promise<HttpResponse<T>>;
-      post<T>(path: string, options?: RequestOptions): Promise<HttpResponse<T>>;
-      put<T>(path: string, options?: RequestOptions): Promise<HttpResponse<T>>;
+      get<T>(path: string, options?: RequestOptions<T>): Promise<HttpResponse<T>>;
+      post<T>(path: string, options?: RequestOptions<T>): Promise<HttpResponse<T>>;
+      put<T>(path: string, options?: RequestOptions<T>): Promise<HttpResponse<T>>;
       patch<T>(
         path: string,
-        options?: RequestOptions
+        options?: RequestOptions<T>
       ): Promise<HttpResponse<T>>;
       delete<T>(
         path: string,
-        options?: RequestOptions
+        options?: RequestOptions<T>
       ): Promise<HttpResponse<T>>;
     };
   }
