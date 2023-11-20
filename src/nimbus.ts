@@ -29,7 +29,7 @@ const nimbus = {
     path: string,
     options?: RequestOptions<T>
   ): Promise<HttpResponse<T>> => nimbusInstance.delete<T>(path, options),
-  create: (config: Config) => HttpClient.create(config),
+  create: <T>(config: Config<T>) => HttpClient.create<T>(config),
 };
 
 export { nimbus as default, NimbusError };
