@@ -27,6 +27,25 @@ export default class HttpClient {
     return this.instance;
   }
 
+  /**
+   * Simple URL validation method
+   * @param url the URL to validate
+   * @returns boolean based on validatity of the URL
+   */
+  private isValidUrl(url: string): boolean {
+    try {
+      new URL(url); //Tries to create a URL object from the provided URL
+      return true; //If succesfull, return true
+    } catch (error) {
+      return false; // If the URL is invliad, return false
+    }
+  }
+
+  /**
+   *
+   * @param config
+   * @returns
+   */
   public static create(config: Config): HttpClient {
     const {
       baseURL,
@@ -53,9 +72,15 @@ export default class HttpClient {
 
   private async sendRequest<T>(
     url: string,
-    options: RequestOptions
+    options: RequestOptions<T>
   ): Promise<HttpResponse<T>> {
+    if (!this.isValidUrl(url)) {
+      //If the URL is invalid, reject the Promise with an error
+      return Promise.reject(new NimbusError("Invalid URL provided"));
+    }
+
     const protocol = url.startsWith("https:") ? https : http;
+
     return new Promise<HttpResponse<T>>(async (resolve, reject) => {
       try {
         const request = protocol.request(url, options, (res) => {
@@ -91,30 +116,8 @@ export default class HttpClient {
                 headers: res.headers,
               };
               resolve(response);
-            } else if (
-              res.statusCode &&
-              res.statusCode >= 400 &&
-              res.statusCode < 500
-            ) {
-              const errorResponse: HttpResponse<Error> = {
-                data: new NimbusError(`Server error: ${res.statusCode}`),
-                status: res.statusCode,
-                headers: res.headers,
-              };
-              reject(errorResponse);
-            } else if (
-              res.statusCode &&
-              res.statusCode >= 500 &&
-              res.statusCode < 600
-            ) {
-              const errorResponse: HttpResponse<Error> = {
-                data: new NimbusError(
-                  `Unexpected status code: ${res.statusCode}`
-                ),
-                status: res.statusCode,
-                headers: res.headers,
-              };
-              reject(errorResponse);
+            } else {
+              this.handleHttpError<T>(res);
             }
           });
         });
@@ -124,19 +127,23 @@ export default class HttpClient {
         }
 
         if (options.timeout) {
-          request.setTimeout(options.timeout, () => {
+          const timeoutId = setTimeout(() => {
             request!.destroy();
             reject(new NimbusError("Request timed out"));
+          }, options.timeout);
+
+          request.on("error", () => {
+            clearTimeout(timeoutId);
           });
         }
 
-        request.on("error", (error) => {
-          reject(new NimbusError(error as unknown as string));
+        request.on("error", (error: any) => {
+          reject(new NimbusError(`Request Error: ${error.message}`));
         });
 
         request.end();
-      } catch (error) {
-        reject(new NimbusError(error as string));
+      } catch (error: any) {
+        reject(new NimbusError(`Request Error: ${error.message}`));
       }
     });
   }
@@ -164,9 +171,9 @@ export default class HttpClient {
     return url;
   }
 
-  private buildRequestOptions(
+  private buildRequestOptions<T>(
     method: string,
-    options: RequestOptions
+    options: RequestOptions<T>
   ): http.RequestOptions {
     const requestOptions: http.RequestOptions = {
       method,
@@ -183,15 +190,15 @@ export default class HttpClient {
 
   // Add properties for request and response interceptors
   private requestInterceptor:
-    | ((options: RequestOptions) => Promise<RequestOptions>)
+    | ((options: RequestOptions<any>) => Promise<RequestOptions<any>>)
     | null = null;
   private responseInterceptor:
     | ((response: HttpResponse<any>) => Promise<HttpResponse<any>>)
     | null = null;
 
   // Method to set request interceptor
-  public setRequestInterceptor(
-    interceptor: (options: RequestOptions) => Promise<RequestOptions>
+  public setRequestInterceptor<T>(
+    interceptor: (options: RequestOptions<T>) => Promise<RequestOptions<T>>
   ) {
     this.requestInterceptor = interceptor;
   }
@@ -204,11 +211,21 @@ export default class HttpClient {
   }
 
   private async send<T>(
-    method: RequestOptions["method"],
+    method: RequestOptions<T>["method"],
     path: string,
-    options: RequestOptions
+    options: RequestOptions<T>,
+    body?: T
   ): Promise<HttpResponse<T>> {
     const url = this.buildUrl(path, options.queryParameters);
+
+    if (body) {
+      //Assign body to an option if provided
+      options.body = body;
+    }
+    if (method) {
+      //Assign method parameter to option if not provided
+      options.method = method;
+    }
     let requestOptions = this.buildRequestOptions(method, options);
 
     if (this.requestInterceptor) {
@@ -221,7 +238,7 @@ export default class HttpClient {
     try {
       const response = await this.sendRequest<T>(
         url,
-        requestOptions as RequestOptions
+        requestOptions as RequestOptions<T>
       );
 
       if (this.responseInterceptor) {
@@ -237,39 +254,69 @@ export default class HttpClient {
     }
   }
 
+  private handleHttpError<T>(res: http.IncomingMessage): void {
+    let errorResponse: HttpResponse<Error>;
+
+    if (res.statusCode && res.statusCode >= 400 && res.statusCode < 500) {
+      errorResponse = {
+        data: new NimbusError(`Client error: ${res.statusCode}`),
+        status: res.statusCode,
+        headers: res.headers,
+      };
+    } else if (
+      res.statusCode &&
+      res.statusCode >= 500 &&
+      res.statusCode < 600
+    ) {
+      errorResponse = {
+        data: new NimbusError(`Server error: ${res.statusCode}`),
+        status: res.statusCode,
+        headers: res.headers,
+      };
+    } else {
+      errorResponse = {
+        data: new NimbusError(`Unexpected status code: ${res.statusCode}`),
+        status: res.statusCode,
+        headers: res.headers,
+      };
+    }
+
+    throw errorResponse;
+  }
+
   public async get<T>(
     path: string,
-    options: RequestOptions = { method: "GET" }
+    options: RequestOptions<T> = { method: "GET" }
   ): Promise<HttpResponse<T>> {
     return this.send<T>("GET", path, options);
   }
 
   public async post<T>(
     path: string,
-    body?: RequestOptions["body"],
-    options: RequestOptions = { method: "POST" }
+    body?: T,
+    options: RequestOptions<T> = { method: "POST" }
   ): Promise<HttpResponse<T>> {
-    return this.send<T>("POST", path, options);
+    return this.send<T>("POST", path, options, body);
   }
 
   public async put<T>(
     path: string,
-    body?: RequestOptions["body"],
-    options: RequestOptions = { method: "PUT" }
+    body?: T,
+    options: RequestOptions<T> = { method: "PUT" }
   ): Promise<HttpResponse<T>> {
-    return this.send<T>("PUT", path, options);
+    return this.send<T>("PUT", path, options, body);
   }
   public async patch<T>(
     path: string,
-    body?: RequestOptions["body"],
-    options: RequestOptions = { method: "PATCH" }
+    body?: T,
+    options: RequestOptions<T> = { method: "PATCH" }
   ): Promise<HttpResponse<T>> {
-    return this.send<T>("PATCH", path, options);
+    return this.send<T>("PATCH", path, options, body);
   }
 
   public async delete<T>(
     path: string,
-    options: RequestOptions = { method: "DELETE" }
+    options: RequestOptions<T> = { method: "DELETE" }
   ): Promise<HttpResponse<T>> {
     return this.send<T>("DELETE", path, options);
   }
