@@ -76,7 +76,7 @@ interface Todo {
 
 async function getTodos() {
   try {
-    const response = await nimbus.get<Todo>("/todos/1");
+    const response = await nimbus.get<Todo>("https://jsonplaceholder.typicode.com/todos/1");
     console.log("GET Request Response Data:", response.data);
     console.log("GET Request Status Code:", response.status);
   } catch (error) {
@@ -99,7 +99,7 @@ const newTodo: Todo = {
 
 async function createTodo() {
   try {
-    const response = await nimbus.post<Todo>("/todos", { body: newTodo });
+    const response = await nimbus.post<Todo>("https://jsonplaceholder.typicode.com/todos", { body: newTodo });
     console.log("POST Request Response Data:", response.data);
     console.log("POST Request Status Code:", response.status);
   } catch (error) {
@@ -122,7 +122,7 @@ const updatedTodo: Todo = {
 
 async function updateTodo() {
   try {
-    const response = await nimbus.put<Todo>("/todos/1", { body: updatedTodo });
+    const response = await nimbus.put<Todo>("https://jsonplaceholder.typicode.com/todos/1", { body: updatedTodo });
     console.log("PUT Request Response Data:", response.data);
     console.log("PUT Request Status Code:", response.status);
   } catch (error) {
@@ -143,7 +143,7 @@ const updatedData: Partial<Todo> = {
 
 async function patchData() {
   try {
-    const response = await nimbus.patch<Todo>("/todos/1", {
+    const response = await nimbus.patch<Todo>("https://jsonplaceholder.typicode.com/todos/1", {
       body: updatedData,
     });
     console.log("PATCH Request Response Data:", response.data);
@@ -161,7 +161,7 @@ Make a `DELETE` Request
 ```ts
 async function deleteTodo() {
   try {
-    const response = await nimbus.delete<Todo>("/todos/1");
+    const response = await nimbus.delete<Todo>("https://jsonplaceholder.typicode.com/1");
     console.log("DELETE Request Response Data:", response.data);
     console.log("DELETE Request Status Code:", response.status);
   } catch (error) {
