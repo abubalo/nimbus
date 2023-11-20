@@ -6,21 +6,30 @@ const nimbusInstance = HttpClient.getInstance();
 
 // Attach methods directly to the nimbusInstance for easy access
 const nimbus = {
-  get: <T>(path: string, options?: RequestOptions) =>
-    nimbusInstance.get<HttpResponse<T>>(path, options),
-  post: <T>(path: string, options?: RequestOptions) =>
-    nimbusInstance.post<HttpResponse<T>>(path, options),
-  put: <T>(path: string, options?: RequestOptions) =>
-    nimbusInstance.put<HttpResponse<T>>(path, options),
-  patch: <T>(path: string, options?: RequestOptions) =>
-    nimbusInstance.patch<HttpResponse<T>>(path, options),
-  delete: <T>(path: string, options?: RequestOptions) =>
-    nimbusInstance.delete<HttpResponse<T>>(path, options),
+  get: <T>(
+    path: string,
+    options?: RequestOptions<T>
+  ): Promise<HttpResponse<T>> => nimbusInstance.get<T>(path, options),
+  post: <T>(
+    path: string,
+    body: T,
+    options?: RequestOptions<T>
+  ): Promise<HttpResponse<T>> => nimbusInstance.post<T>(path, body, options),
+  put: <T>(
+    path: string,
+    body: T,
+    options?: RequestOptions<T>
+  ): Promise<HttpResponse<T>> => nimbusInstance.put<T>(path, body, options),
+  patch: <T>(
+    path: string,
+    body: T,
+    options?: RequestOptions<T>
+  ): Promise<HttpResponse<T>> => nimbusInstance.patch<T>(path, body, options),
+  delete: <T>(
+    path: string,
+    options?: RequestOptions<T>
+  ): Promise<HttpResponse<T>> => nimbusInstance.delete<T>(path, options),
   create: (config: Config) => HttpClient.create(config),
 };
 
-//Make it compactible with browser
-if (typeof window !== "undefined") {
-  window.nimbus = nimbusInstance;
-}
 export { nimbus as default, NimbusError };
