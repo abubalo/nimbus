@@ -12,10 +12,10 @@ interface Todo {
   completed: boolean;
 }
 
-async function getTodos() {
+async function getTodos(id: number = 1) {
   try {
     const response = await nimbus.get<Todo>(
-      "https://jsonplaceholder.typicode.com/todos/1"
+      `https://jsonplaceholder.typicode.com/todos/${id}`
     );
     console.log("Response:", response);
   } catch (error) {
@@ -23,7 +23,7 @@ async function getTodos() {
   }
 }
 
-// getTodos();
+getTodos(5);
 
 async function createTodos() {
   const newTodo: Todo = {
@@ -34,7 +34,7 @@ async function createTodos() {
   };
   try {
     const response = await nimbus.post<Todo>(
-      "https://jsonplaceholder.typicode.com/posts", {body: newTodo}
+      "https://jsonplaceholder.typicode.com/posts", newTodo
     );
     console.log("Response:", response);
   } catch (error) {
@@ -42,5 +42,5 @@ async function createTodos() {
   }
 }
 
-createTodos();
+// createTodos();
 
