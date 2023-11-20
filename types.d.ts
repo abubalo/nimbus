@@ -48,21 +48,3 @@ export interface Config {
   timeout?: number;
   validateStatus: number;
 }
-
-declare global {
-  interface Window {
-    nimbus: {
-      get<T>(path: string, options?: RequestOptions<T>): Promise<HttpResponse<T>>;
-      post<T>(path: string, options?: RequestOptions<T>): Promise<HttpResponse<T>>;
-      put<T>(path: string, options?: RequestOptions<T>): Promise<HttpResponse<T>>;
-      patch<T>(
-        path: string,
-        options?: RequestOptions<T>
-      ): Promise<HttpResponse<T>>;
-      delete<T>(
-        path: string,
-        options?: RequestOptions<T>
-      ): Promise<HttpResponse<T>>;
-    };
-  }
-}
