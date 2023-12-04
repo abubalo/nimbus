@@ -171,13 +171,8 @@ export default class HttpClient {
     url += path;
 
     if (queryParameters) {
-      const queryString = Object.keys(queryParameters)
-        .map(
-          (key) =>
-            `<span class="math-inline">\{encodeURIComponent\(key\)\}\=</span>{encodeURIComponent(queryParameters[key])}`
-        )
-        .join("&");
-      url += `?${queryString}`;
+      const queryParams = new URLSearchParam(Object.entries(queryParameters))
+      url += `?${queryParams.toString()}`;
     }
 
     return url;
