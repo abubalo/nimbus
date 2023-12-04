@@ -171,7 +171,7 @@ export default class HttpClient {
     url += path;
 
     if (queryParameters) {
-      const queryParams = new URLSearchParam(Object.entries(queryParameters))
+      const queryParams = new URLSearchParams(Object.entries(queryParameters))
       url += `?${queryParams.toString()}`;
     }
 
